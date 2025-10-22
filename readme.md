@@ -6,6 +6,8 @@ This guide provides the complete instructions to install and configure the Openc
 
 By following these steps, you will set up a secure, shareable project configuration that allows every team member to use their personal API key without committing secrets to the repository.
 
+The steps (API endpoint and API key) are broadly applicable to other tools as well
+
 ---
 
 ### **Prerequisites**
@@ -179,7 +181,7 @@ With everything configured, you can now test the full setup from within your pro
     ```
 
 *   **Launch the interactive TUI (Text User Interface):** This is the most common way to use the tool for a conversational session.
-    1.  Run the `opencode` command by itself in your project directory:
+    1.  Run the `opencode` command by itself in your project directory **in a terminal emulator from the options in the prerequisites section**:
         ```bash
         opencode
         ```
@@ -231,4 +233,5 @@ Now that you have the CLI configured, you can explore the full capabilities of t
 *   **VS Code:** Opencode.ai offers a powerful extension for Visual Studio Code, allowing you to run prompts, manage models, and interact with the AI directly within your editor. Search for "Opencode.ai" in the VS Code Marketplace.
 
 *   **Neovim:** For users of Neovim, there are community-driven plugins and configurations available that integrate Opencode.ai into your Vim workflow. Check the documentation and GitHub for the latest community projects.
+
 
