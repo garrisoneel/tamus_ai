@@ -1,9 +1,3 @@
-Of course! That's a major feature to include. You are absolutely right. The TUI is a primary way to interact with the tool, and the guide is incomplete without it.
-
-Here is the final, complete version of the guide, now including instructions on how to launch and use the interactive TUI.
-
-***
-
 ## Configuration Guide: Using Opencode.ai with the TAMUS RELLIS AI Endpoint
 
 ### **Objective**
@@ -234,4 +228,5 @@ Now that you have the CLI configured, you can explore the full capabilities of t
 #### **Editor Integrations**
 
 *   **VS Code:** Opencode.ai offers a powerful extension for Visual Studio Code, allowing you to run prompts, manage models, and interact with the AI directly within your editor. Search for "Opencode.ai" in the VS Code Marketplace.
+
 *   **Neovim:** For users of Neovim, there are community-driven plugins and configurations available that integrate Opencode.ai into your Vim workflow. Check the documentation and GitHub for the latest community projects.
