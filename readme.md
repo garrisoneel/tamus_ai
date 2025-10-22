@@ -10,25 +10,26 @@ By following these steps, you will set up a secure, shareable project configurat
 
 ### **Prerequisites**
 
-Before you begin, ensure you have the following installed on your system (WSL2/Ubuntu):
+To use OpenCode, you’ll need:
 
-1.  **Node.js and npm:** Opencode.ai is installed via the Node Package Manager.
-    *   Check for installation: `node -v` and `npm -v`
-    *   If not installed, run: `sudo apt update && sudo apt install nodejs npm -y`
+ A modern terminal emulator like:
+ [WezTerm](https://wezterm.org/), cross-platform  
+ [Alacritty](https://alacritty.org/), cross-platform  
+ [Ghostty](https://ghostty.org/), Linux and macOS  
+ [Kitty](https://sw.kovidgoyal.net/kitty/), Linux and macOS  
 
-2.  **curl and jq:** These are essential tools for testing your connection and API key.
-    *   Check for installation: `command -v curl` and `command -v jq`
-    *   If not installed, run: `sudo apt install curl jq -y`
+ API keys for the LLM providers you want to use.
 
 ---
 
 ### **Step 1: Install the Opencode.ai CLI**
 
-First, install the Opencode.ai tool globally on your system using `npm`.
+Installation instructions can be found in the [opencode docs](https://opencode.ai/docs) and are summarized here (assuming linux)
+First, install the Opencode.ai tool globally on your system using the provided install script.
 
 1.  Run the installation command:
     ```bash
-    npm install -g opencode-ai
+    curl -fsSL https://opencode.ai/install | bash
     ```
 
 2.  **Verification Step:** After installation, verify that the `opencode` command is available by checking its version.
@@ -230,3 +231,4 @@ Now that you have the CLI configured, you can explore the full capabilities of t
 *   **VS Code:** Opencode.ai offers a powerful extension for Visual Studio Code, allowing you to run prompts, manage models, and interact with the AI directly within your editor. Search for "Opencode.ai" in the VS Code Marketplace.
 
 *   **Neovim:** For users of Neovim, there are community-driven plugins and configurations available that integrate Opencode.ai into your Vim workflow. Check the documentation and GitHub for the latest community projects.
+
