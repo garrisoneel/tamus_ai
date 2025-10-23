@@ -1,5 +1,6 @@
 ## Configuration Guide: Using Opencode.ai with the TAMUS RELLIS AI Endpoint
-
+### **Attribution**
+The original version of this document was created by Dr. Lucas W Krakow 
 ### **Objective**
 
 This guide provides the complete instructions to install and configure the Opencode.ai command-line interface (CLI) to use the TAMUS RELLIS AI Platform's hosted models directly from your terminal.
@@ -233,5 +234,6 @@ Now that you have the CLI configured, you can explore the full capabilities of t
 *   **VS Code:** Opencode.ai offers a powerful extension for Visual Studio Code, allowing you to run prompts, manage models, and interact with the AI directly within your editor. Search for "Opencode.ai" in the VS Code Marketplace.
 
 *   **Neovim:** For users of Neovim, there are community-driven plugins and configurations available that integrate Opencode.ai into your Vim workflow. Check the documentation and GitHub for the latest community projects.
+
 
 
