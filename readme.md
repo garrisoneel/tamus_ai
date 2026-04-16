@@ -2,7 +2,7 @@
 
 ### **Attribution**
 The original version of this document was created by Dr. Lucas W Krakow  
-Completely restructured and updated by the TAMU EDU team (April 2026)
+Completely restructured and updated by Garrison Neel (April 2026)
 
 ---
 
@@ -233,36 +233,17 @@ This file, `opencode.json`, will live in your shared project directory. It tells
               "cost": { "input": 0.0000011, "output": 0.0000044 }
             }
           }
-        },
-        "BCDC": {
-          "npm": "@ai-sdk/openai-compatible",
-          "name": "BCDC HPC",
-          "options": {
-            "baseURL": "http://10.152.11.172:11434/v1",
-            "apiKey": "unused"
-          },
-          "models": {
-            "qwen3.5": {
-              "name": "Qwen3.5",
-              "limit": { "context": 256000, "output": 32000 },
-              "cost": { "input": 0, "output": 0 },
-              "modalities": {
-                "input": ["text", "image"],
-                "output": ["text"]
-              }
-            }
-          }
         }
       },
-      "model": "BCDC/qwen3.5"
+      "model": "TAMUS/protected.gpt-5.4"
     }
     ```
 
     **Key Features of This Config:**
-    - ✅ **Cost tracking enabled** - TUI shows real dollar amounts
+    - ✅ **Cost tracking enabled** - TUI shows real dollar amounts as you use models
     - ✅ **Accurate limits** - All models have correct context/output token limits
-    - ✅ **BCDC Qwen3.5 free** - Local HPC cluster, no API costs, supports images
     - ✅ **Schema compliant** - Uses proper `limit` and `cost` fields (not deprecated `options.max_tokens`)
+    - ✅ **Ready to commit** - Safe to share in your team's Git repository
 
 4.  This file can now be safely committed to your team's shared Git repository.
 
@@ -270,7 +251,7 @@ This file, `opencode.json`, will live in your shared project directory. It tells
 
 You can also set up a **global** configuration by placing a file with this content at `~/.config/opencode/opencode.json`. However, please be aware that any project-specific `opencode.json` file in your current directory will always override the global settings.
 
-**TEAM SETUP:** For teams that want shared configuration across all projects, see the "Team Configuration via Git" section below.
+**TEAM SETUP:** For teams that want shared configuration across all projects, see the "Team Configuration via Git" section below, or use the sample config provided in this repo.
 
 ---
 
@@ -278,12 +259,12 @@ You can also set up a **global** configuration by placing a file with this conte
 
 With everything configured, you can now test the full setup from within your project directory.
 
-1.  **Verification Step 1: List the Models.** Run the `models` command. You should see the models from TAMUS listed under the `TAMUS` provider and Qwen3.5 under `BCDC`.
+1.  **Verification Step 1: List the Models.** Run the `models` command. You should see the models from TAMUS listed under the `TAMUS` provider.
     ```bash
     opencode models
     ```
 
-2.  **Verification Step 2: Run a Prompt.** Use the `run` command to send a request to the default model (`BCDC/qwen3.5` as configured in the file).
+2.  **Verification Step 2: Run a Prompt.** Use the `run` command to send a request to the default model (e.g., `TAMUS/protected.gpt-5.4`).
     ```bash
     opencode run "Why is the sky blue?"
     ```
@@ -306,7 +287,7 @@ With everything configured, you can now test the full setup from within your pro
         ```bash
         opencode
         ```
-    2.  This will launch an interactive chat session with the default model.
+    2.  This will launch an interactive chat session with the default model (configured in `opencode.json`).
     3.  To switch models while inside the TUI, type `/models` and press Enter. This will bring up a menu where you can select from all configured models.
     4.  To exit the TUI, press `Ctrl + C`.
 
@@ -326,7 +307,6 @@ With everything configured, you can now test the full setup from within your pro
 
 **Most Powerful:**
 - **Claude Opus 4.5**: $5/$25 per 1M tokens — Best for deep research, complex coding
-- **Qwen3.5 (BCDC)**: **FREE** — 256K context, image support, local HPC
 
 **For STEM/Technical Work:**
 - **o4-mini**: $1.10/$4.40 per 1M tokens — Specialized for coding, math, science
@@ -362,7 +342,7 @@ This approach:
 - ✅ No merge conflicts with local config
 - ✅ One `git pull` updates everything
 
-**TAMU EDU Team Config:** `git@github.com:tamu-edu/ta4-opencode-config.git`
+**Sample Config:** See `opencode.json.sample` in this repo for a ready-to-use template.
 
 ---
 
@@ -387,8 +367,8 @@ This approach:
 #### **Issue 3: Cost tracking shows $0.00**
 
 *   **Symptom:** The TUI sidebar shows "$0.00 spent" even after using models.
-*   **Cause:** This is expected behavior for the BCDC Qwen3.5 model (it's free!). For TAMUS models, costs should be calculated.
-*   **Solution:** Try switching to a TAMUS model like `TAMUS/protected.gpt-5.4` and the cost should start tracking.
+*   **Cause:** Costs are calculated based on the `cost` field in your config. If using a model without cost data, it will show $0.
+*   **Solution:** Verify your model has `cost.input` and `cost.output` fields defined in `opencode.json`.
 
 ---
 
@@ -426,6 +406,5 @@ Now that you have the CLI configured, you can explore the full capabilities of t
 | **$** | <$1 / <$5 | Gemini 2.0 Flash Lite, Claude Haiku 3.5/4.5 |
 | **$$** | $1-3 / $5-15 | GPT-5, GPT-4.1, o3/o4-mini, Gemini 2.5 Pro |
 | **$$$** | $3+ / $15+ | Claude Sonnet 4/4.5, Claude Opus 4.5 |
-| **FREE** | $0 / $0 | BCDC Qwen3.5 (local HPC) |
 
 **Daily Token Allowance:** Each TAMUS user gets a daily token allowance that resets between 6-7 PM CT. See [Daily Usage Allowance](https://docs.tamus.ai/docs/prod/daily-usage-allowance) for details.
