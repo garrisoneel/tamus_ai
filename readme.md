@@ -17,7 +17,6 @@ The steps (API endpoint and API key) are broadly applicable to other tools as we
 **NEW (April 2026):** This guide now includes:
 - ✅ Complete model pricing (cost tracking in the TUI)
 - ✅ Accurate context/output token limits for all models
-- ✅ BCDC HPC local cluster integration (free Qwen3.5 with image support)
 - ✅ Shared team configuration via Git (symlink-based setup)
 - ✅ Proper schema-compliant config structure
 
