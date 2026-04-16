@@ -292,32 +292,6 @@ With everything configured, you can now test the full setup from within your pro
 
 ---
 
-### **Troubleshooting & Known Issues**
-
-#### **Issue 1: `max_tokens` Error**
-
-*   **Symptom:** You receive an error that says `BadRequestError - max_tokens is too large`.
-*   **Cause:** The tool's default request for the maximum response size is larger than the model's limit.
-*   **Solution:** The new config uses the correct `limit.output` field for all models. If you still see this error, verify you're using the latest config template above.
-
-#### **Issue 2: Error with certain Claude models**
-
-*   **Symptom:** You receive an error: `An unexpected error occurred: 'NoneType' object has no attribute 'replace'`.
-*   **Cause:** This appears to be a bug in how the Opencode tool handles the API response from specific Claude models on our endpoint.
-*   **Affected Models:**
-    *   `protected.Claude 3.5 Haiku`
-    *   `protected.Claude 3.5 Sonnet`
-    *   `protected.Claude 3.7 Sonnet`
-*   **Solution:** To avoid this error, do not use these models with the `run` command. They are included in the configuration file for completeness but may not be compatible at this time. Use `protected.Claude Haiku 4.5` or `protected.Claude Sonnet 4.5` instead.
-
-#### **Issue 3: Cost tracking shows $0.00**
-
-*   **Symptom:** The TUI sidebar shows "$0.00 spent" even after using models.
-*   **Cause:** Costs are calculated based on the `cost` field in your config. If using a model without cost data, it will show $0.
-*   **Solution:** Verify your model has `cost.input` and `cost.output` fields defined in `opencode.json`.
-
----
-
 ### **Further Exploration & Resources**
 
 Now that you have the CLI configured, you can explore the full capabilities of the Opencode.ai ecosystem.
