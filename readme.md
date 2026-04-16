@@ -250,8 +250,6 @@ This file, `opencode.json`, will live in your shared project directory. It tells
 
 You can also set up a **global** configuration by placing a file with this content at `~/.config/opencode/opencode.json`. However, please be aware that any project-specific `opencode.json` file in your current directory will always override the global settings.
 
-**TEAM SETUP:** For teams that want shared configuration across all projects, see the "Team Configuration via Git" section below, or use the sample config provided in this repo.
-
 ---
 
 ### **Step 4: Final Verification and Usage**
@@ -291,57 +289,6 @@ With everything configured, you can now test the full setup from within your pro
     4.  To exit the TUI, press `Ctrl + C`.
 
     **NEW:** The TUI sidebar now shows **real-time cost tracking** - you'll see token usage and dollar amounts as you chat!
-
----
-
-### **Model Selection Guide**
-
-**Cheapest Options:**
-- **Gemini 2.0 Flash Lite**: $0.075/$0.30 per 1M tokens — Best for high-volume, simple tasks
-- **Claude Haiku 4.5**: $1/$5 per 1M tokens — Fast, excellent for coding
-
-**Best Value:**
-- **GPT-5.4 / GPT-5.2**: $1.75/$14 per 1M tokens — Professional-grade, human-expert level
-- **Gemini 2.5 Pro**: $1.25/$10 per 1M tokens — Great for complex reasoning, 1M context
-
-**Most Powerful:**
-- **Claude Opus 4.5**: $5/$25 per 1M tokens — Best for deep research, complex coding
-
-**For STEM/Technical Work:**
-- **o4-mini**: $1.10/$4.40 per 1M tokens — Specialized for coding, math, science
-
----
-
-### **Team Configuration via Git (NEW)**
-
-For teams that want to share opencode configuration (skills, commands, agents, model configs), we've set up a symlink-based approach:
-
-1.  **Clone the team config to a separate location:**
-    ```bash
-    git clone git@github.com:tamu-edu/ta4-opencode-config.git ~/.config/opencode-base
-    ```
-
-2.  **Create symlinks for shared folders:**
-    ```bash
-    mkdir -p ~/.config/opencode
-    ln -s ~/.config/opencode-base/skills ~/.config/opencode/skills
-    ln -s ~/.config/opencode-base/commands ~/.config/opencode/commands
-    ln -s ~/.config/opencode-base/agents ~/.config/opencode/agents
-    ```
-
-3.  **Update team config:**
-    ```bash
-    cd ~/.config/opencode-base
-    git pull origin main
-    ```
-
-This approach:
-- ✅ Keeps personal settings intact
-- ✅ Automatically shares team skills/commands/agents
-- ✅ No merge conflicts with local config
-- ✅ One `git pull` updates everything
-
-**Sample Config:** See `opencode.json.sample` in this repo for a ready-to-use template.
 
 ---
 
