@@ -1,36 +1,48 @@
 ## Configuration Guide: Using Opencode.ai with the TAMUS RELLIS AI Endpoint
+
 ### **Attribution**
-The original version of this document was created by Dr. Lucas W Krakow 
+The original version of this document was created by Dr. Lucas W Krakow  
+Completely restructured and updated by the TAMU EDU team (April 2026)
+
+---
+
 ### **Objective**
 
 This guide provides the complete instructions to install and configure the Opencode.ai command-line interface (CLI) to use the TAMUS RELLIS AI Platform's hosted models directly from your terminal.
 
 By following these steps, you will set up a secure, shareable project configuration that allows every team member to use their personal API key without committing secrets to the repository.
 
-The steps (API endpoint and API key) are broadly applicable to other tools as well
+The steps (API endpoint and API key) are broadly applicable to other tools as well.
+
+**NEW (April 2026):** This guide now includes:
+- ✅ Complete model pricing (cost tracking in the TUI)
+- ✅ Accurate context/output token limits for all models
+- ✅ BCDC HPC local cluster integration (free Qwen3.5 with image support)
+- ✅ Shared team configuration via Git (symlink-based setup)
+- ✅ Proper schema-compliant config structure
 
 ---
 
 ### **Prerequisites**
 
-To use OpenCode, you’ll need:
+To use OpenCode, you'll need:
 
- A modern terminal emulator like:
- [WezTerm](https://wezterm.org/), cross-platform  
- [Alacritty](https://alacritty.org/), cross-platform  
- [Ghostty](https://ghostty.org/), Linux and macOS  
- [Kitty](https://sw.kovidgoyal.net/kitty/), Linux and macOS  
+**A modern terminal emulator like:**
+- [WezTerm](https://wezterm.org/), cross-platform  
+- [Alacritty](https://alacritty.org/), cross-platform  
+- [Ghostty](https://ghostty.org/), Linux and macOS  
+- [Kitty](https://sw.kovidgoyal.net/kitty/), Linux and macOS  
 
- API keys for the LLM providers you want to use.
+**API keys for the LLM providers you want to use:**
+- TAMUS AI API key: https://docs.tamus.ai/docs/prod/advanced/api/obtain-tamus-ai-chat-api-key/
 
 ---
 
 ### **Step 1: Install the Opencode.ai CLI**
 
-Installation instructions can be found in the [opencode docs](https://opencode.ai/docs) and are summarized here (assuming linux)
-First, install the Opencode.ai tool globally on your system using the provided install script.
+Installation instructions can be found in the [opencode docs](https://opencode.ai/docs) and are summarized here (assuming linux):
 
-1.  Run the installation command:
+1.  **Run the installation command:**
     ```bash
     curl -fsSL https://opencode.ai/install | bash
     ```
@@ -47,8 +59,8 @@ First, install the Opencode.ai tool globally on your system using the provided i
 
 This is the most important step for your personal setup. We will securely store your endpoint URL and secret API key as environment variables.
 
-1.  **Obtain Your API Key:** You can acquire your personal API key by following the official documentation at the link below. Keep this key safe as it is your password.
-    *   https://docs.tamus.ai/docs/prod/advanced/api/obtain-tamus-ai-chat-api-key/
+1.  **Obtain Your API Key:** You can acquire your personal API key by following the official documentation:
+    - https://docs.tamus.ai/docs/prod/advanced/api/obtain-tamus-ai-chat-api-key/
 
 2.  Open your Bash startup script using the `nano` text editor:
     ```bash
@@ -72,25 +84,28 @@ This is the most important step for your personal setup. We will securely store 
     *(Note: Any new terminal you open from now on will have these variables loaded automatically.)*
 
 6.  **Verification Step:** Confirm that your variables are correctly set and that your credentials work.
-    *   First, check that the variables are loaded:
-        ```bash
-        echo $TAMUS_AI_CHAT_API_ENDPOINT
-        echo $TAMUS_AI_CHAT_API_KEY
-        ```
-        These commands should print your URL and key, not blank lines.
+    - First, check that the variables are loaded:
+      ```bash
+      echo $TAMUS_AI_CHAT_API_ENDPOINT
+      echo $TAMUS_AI_CHAT_API_KEY
+      ```
+      These commands should print your URL and key, not blank lines.
 
-    *   Next, use `curl` to ask the endpoint for its list of models. This is the definitive test that your URL and API Key are correct.
-        ```bash
-        curl -s -X GET "$TAMUS_AI_CHAT_API_ENDPOINT/models" \
-          -H "Authorization: Bearer $TAMUS_AI_CHAT_API_KEY" \
-          | jq -r '.data[].id'
-        ```        If this command successfully prints a list of model names, your environment is perfectly configured.
+    - Next, use `curl` to ask the endpoint for its list of models. This is the definitive test that your URL and API Key are correct.
+      ```bash
+      curl -s -X GET "$TAMUS_AI_CHAT_API_ENDPOINT/models" \
+        -H "Authorization: Bearer $TAMUS_AI_CHAT_API_KEY" \
+        | jq -r '.data[].id'
+      ```
+      If this command successfully prints a list of model names, your environment is perfectly configured.
 
 ---
 
 ### **Step 3: Create the Project Configuration File**
 
 This file, `opencode.json`, will live in your shared project directory. It tells Opencode.ai how to connect to our endpoint and what models are available.
+
+**NEW:** This config now includes **cost tracking** so the TUI shows real dollar amounts as you use models!
 
 1.  Navigate to your project's root directory.
 
@@ -104,8 +119,12 @@ This file, `opencode.json`, will live in your shared project directory. It tells
     ```json
     {
       "$schema": "https://opencode.ai/config.json",
+      "compaction": {
+        "auto": true,
+        "prune": true
+      },
       "provider": {
-        "my-institute": {
+        "TAMUS": {
           "npm": "@ai-sdk/openai-compatible",
           "name": "TAMUS AI Endpoint",
           "options": {
@@ -113,44 +132,145 @@ This file, `opencode.json`, will live in your shared project directory. It tells
             "apiKey": "{env:TAMUS_AI_CHAT_API_KEY}"
           },
           "models": {
-            "protected.Claude 3.5 Haiku": { "name": "Claude 3.5 Haiku" },
-            "protected.Claude 3.5 Sonnet": { "name": "Claude 3.5 Sonnet" },
-            "protected.Claude 3.7 Sonnet": { "name": "Claude 3.7 Sonnet" },
-            "protected.Claude Opus 4.1": { "name": "Claude Opus 4.1" },
-            "protected.Claude Sonnet 4": { "name": "Claude Sonnet 4" },
-            "protected.Claude Sonnet 4.5": { "name": "Claude Sonnet 4.5" },
-            "protected.gemini-2.0-flash": { "name": "Gemini 2.0 Flash" },
-            "protected.gemini-2.0-flash-lite": { "name": "Gemini 2.0 Flash Lite" },
-            "protected.gemini-2.5-flash": { "name": "Gemini 2.5 Flash" },
-            "protected.gemini-2.5-pro": { "name": "Gemini 2.5 Pro" },
-            "protected.gpt-4.1": { "name": "GPT 4.1" },
+            "protected.Claude 3.5 Haiku": {
+              "name": "Claude 3.5 Haiku",
+              "limit": { "context": 200000, "output": 8000 },
+              "cost": { "input": 0.0000008, "output": 0.000004 }
+            },
+            "protected.Claude 3.5 Sonnet": {
+              "name": "Claude 3.5 Sonnet",
+              "limit": { "context": 200000, "output": 4096 },
+              "cost": { "input": 0.000003, "output": 0.000015 }
+            },
+            "protected.Claude 3.7 Sonnet": {
+              "name": "Claude 3.7 Sonnet",
+              "limit": { "context": 200000, "output": 8192 },
+              "cost": { "input": 0.000003, "output": 0.000015 }
+            },
+            "protected.Claude Haiku 4.5": {
+              "name": "Claude Haiku 4.5",
+              "limit": { "context": 200000, "output": 64000 },
+              "cost": { "input": 0.000001, "output": 0.000005 }
+            },
+            "protected.Claude Opus 4.5": {
+              "name": "Claude Opus 4.5",
+              "limit": { "context": 200000, "output": 64000 },
+              "cost": { "input": 0.000005, "output": 0.000025 }
+            },
+            "protected.Claude Sonnet 4": {
+              "name": "Claude Sonnet 4",
+              "limit": { "context": 200000, "output": 64000 },
+              "cost": { "input": 0.000003, "output": 0.000015 }
+            },
+            "protected.Claude Sonnet 4.5": {
+              "name": "Claude Sonnet 4.5",
+              "limit": { "context": 200000, "output": 64000 },
+              "cost": { "input": 0.000003, "output": 0.000015 }
+            },
+            "protected.gemini-2.0-flash": {
+              "name": "Gemini 2.0 Flash",
+              "limit": { "context": 1048576, "output": 8192 },
+              "cost": { "input": 0.00000015, "output": 0.0000006 }
+            },
+            "protected.gemini-2.0-flash-lite": {
+              "name": "Gemini 2.0 Flash Lite",
+              "limit": { "context": 1048576, "output": 8192 },
+              "cost": { "input": 0.000000075, "output": 0.0000003 }
+            },
+            "protected.gemini-2.5-flash": {
+              "name": "Gemini 2.5 Flash",
+              "limit": { "context": 1048576, "output": 65535 },
+              "cost": { "input": 0.00000015, "output": 0.0000006 }
+            },
+            "protected.gemini-2.5-flash-lite": {
+              "name": "Gemini 2.5 Flash Lite",
+              "limit": { "context": 1048576, "output": 65536 },
+              "cost": { "input": 0.0000001, "output": 0.0000004 }
+            },
+            "protected.gemini-2.5-pro": {
+              "name": "Gemini 2.5 Pro",
+              "limit": { "context": 1048576, "output": 65535 },
+              "cost": { "input": 0.00000125, "output": 0.00001 }
+            },
+            "protected.gpt-4.1": {
+              "name": "GPT 4.1",
+              "limit": { "context": 1047576, "output": 32768 },
+              "cost": { "input": 0.000002, "output": 0.000008 }
+            },
             "protected.gpt-4o": {
               "name": "GPT-4o",
-              "options": {
-                "max_tokens": 16300
-              }
+              "limit": { "context": 128000, "output": 16384 },
+              "cost": { "input": 0.0000025, "output": 0.00001 }
             },
             "protected.gpt-5": {
               "name": "GPT-5",
-              "options": {
-                "max_tokens": 32000
-              }
+              "limit": { "context": 400000, "output": 128000 },
+              "cost": { "input": 0.00000125, "output": 0.00001 }
             },
-            "protected.llama3.2": { "name": "Llama 3.2" },
-            "protected.o3": { "name": "o3" },
-            "protected.o3-mini": { "name": "o3 Mini" },
-            "protected.o4-mini": { "name": "o4 Mini" },
-            "protected.text-embedding-3-small": { "name": "Text Embedding 3 Small" }
+            "protected.gpt-5.2": {
+              "name": "GPT-5.2",
+              "limit": { "context": 400000, "output": 128000 },
+              "cost": { "input": 0.00000175, "output": 0.000014 }
+            },
+            "protected.gpt-5.4": {
+              "name": "GPT-5.4",
+              "limit": { "context": 400000, "output": 128000 },
+              "cost": { "input": 0.00000175, "output": 0.000014 }
+            },
+            "protected.llama3.2": {
+              "name": "Llama 3.2",
+              "limit": { "context": 131072, "output": 32768 },
+              "cost": { "input": 0.000001, "output": 0.000003 }
+            },
+            "protected.o3-mini": {
+              "name": "o3 Mini",
+              "limit": { "context": 200000, "output": 100000 },
+              "cost": { "input": 0.0000011, "output": 0.0000044 }
+            },
+            "protected.o4-mini": {
+              "name": "o4 Mini",
+              "limit": { "context": 200000, "output": 100000 },
+              "cost": { "input": 0.0000011, "output": 0.0000044 }
+            }
+          }
+        },
+        "BCDC": {
+          "npm": "@ai-sdk/openai-compatible",
+          "name": "BCDC HPC",
+          "options": {
+            "baseURL": "http://10.152.11.172:11434/v1",
+            "apiKey": "unused"
+          },
+          "models": {
+            "qwen3.5": {
+              "name": "Qwen3.5",
+              "limit": { "context": 256000, "output": 32000 },
+              "cost": { "input": 0, "output": 0 },
+              "modalities": {
+                "input": ["text", "image"],
+                "output": ["text"]
+              }
+            }
           }
         }
       },
-      "model": "my-institute/protected.gpt-5"
+      "model": "BCDC/qwen3.5"
     }
     ```
-    This file can now be safely committed to your team's shared Git repository.
+
+    **Key Features of This Config:**
+    - ✅ **Cost tracking enabled** - TUI shows real dollar amounts
+    - ✅ **Accurate limits** - All models have correct context/output token limits
+    - ✅ **BCDC Qwen3.5 free** - Local HPC cluster, no API costs, supports images
+    - ✅ **Schema compliant** - Uses proper `limit` and `cost` fields (not deprecated `options.max_tokens`)
+
+4.  This file can now be safely committed to your team's shared Git repository.
 
 #### **A Note on Global vs. Project Configuration**
+
 You can also set up a **global** configuration by placing a file with this content at `~/.config/opencode/opencode.json`. However, please be aware that any project-specific `opencode.json` file in your current directory will always override the global settings.
+
+**TEAM SETUP:** For teams that want shared configuration across all projects, see the "Team Configuration via Git" section below.
 
 ---
 
@@ -158,12 +278,12 @@ You can also set up a **global** configuration by placing a file with this conte
 
 With everything configured, you can now test the full setup from within your project directory.
 
-1.  **Verification Step 1: List the Models.** Run the `models` command. You should see the models from our institute listed under the `my-institute` provider.
+1.  **Verification Step 1: List the Models.** Run the `models` command. You should see the models from TAMUS listed under the `TAMUS` provider and Qwen3.5 under `BCDC`.
     ```bash
     opencode models
     ```
 
-2.  **Verification Step 2: Run a Prompt.** Use the `run` command to send a request to the default model (`protected.gpt-5` as configured in the file).
+2.  **Verification Step 2: Run a Prompt.** Use the `run` command to send a request to the default model (`BCDC/qwen3.5` as configured in the file).
     ```bash
     opencode run "Why is the sky blue?"
     ```
@@ -178,7 +298,7 @@ With everything configured, you can now test the full setup from within your pro
 
 *   **Use a different model from the command line:** Use the `--model` flag. Remember to put quotes around model names that contain spaces.
     ```bash
-    opencode --model my-institute/"protected.Claude Sonnet 4.5" run "Your prompt here"
+    opencode --model TAMUS/"protected.Claude Sonnet 4.5" run "Your prompt here"
     ```
 
 *   **Launch the interactive TUI (Text User Interface):** This is the most common way to use the tool for a conversational session.
@@ -190,6 +310,60 @@ With everything configured, you can now test the full setup from within your pro
     3.  To switch models while inside the TUI, type `/models` and press Enter. This will bring up a menu where you can select from all configured models.
     4.  To exit the TUI, press `Ctrl + C`.
 
+    **NEW:** The TUI sidebar now shows **real-time cost tracking** - you'll see token usage and dollar amounts as you chat!
+
+---
+
+### **Model Selection Guide**
+
+**Cheapest Options:**
+- **Gemini 2.0 Flash Lite**: $0.075/$0.30 per 1M tokens — Best for high-volume, simple tasks
+- **Claude Haiku 4.5**: $1/$5 per 1M tokens — Fast, excellent for coding
+
+**Best Value:**
+- **GPT-5.4 / GPT-5.2**: $1.75/$14 per 1M tokens — Professional-grade, human-expert level
+- **Gemini 2.5 Pro**: $1.25/$10 per 1M tokens — Great for complex reasoning, 1M context
+
+**Most Powerful:**
+- **Claude Opus 4.5**: $5/$25 per 1M tokens — Best for deep research, complex coding
+- **Qwen3.5 (BCDC)**: **FREE** — 256K context, image support, local HPC
+
+**For STEM/Technical Work:**
+- **o4-mini**: $1.10/$4.40 per 1M tokens — Specialized for coding, math, science
+
+---
+
+### **Team Configuration via Git (NEW)**
+
+For teams that want to share opencode configuration (skills, commands, agents, model configs), we've set up a symlink-based approach:
+
+1.  **Clone the team config to a separate location:**
+    ```bash
+    git clone git@github.com:tamu-edu/ta4-opencode-config.git ~/.config/opencode-base
+    ```
+
+2.  **Create symlinks for shared folders:**
+    ```bash
+    mkdir -p ~/.config/opencode
+    ln -s ~/.config/opencode-base/skills ~/.config/opencode/skills
+    ln -s ~/.config/opencode-base/commands ~/.config/opencode/commands
+    ln -s ~/.config/opencode-base/agents ~/.config/opencode/agents
+    ```
+
+3.  **Update team config:**
+    ```bash
+    cd ~/.config/opencode-base
+    git pull origin main
+    ```
+
+This approach:
+- ✅ Keeps personal settings intact
+- ✅ Automatically shares team skills/commands/agents
+- ✅ No merge conflicts with local config
+- ✅ One `git pull` updates everything
+
+**TAMU EDU Team Config:** `git@github.com:tamu-edu/ta4-opencode-config.git`
+
 ---
 
 ### **Troubleshooting & Known Issues**
@@ -198,16 +372,7 @@ With everything configured, you can now test the full setup from within your pro
 
 *   **Symptom:** You receive an error that says `BadRequestError - max_tokens is too large`.
 *   **Cause:** The tool's default request for the maximum response size is larger than the model's limit.
-*   **Solution:** You must add an `options` block to the specific model in `opencode.json` to limit the tokens, as has been done for `gpt-4o` and `gpt-5` in the template above.
-    *   **Example Syntax:**
-        ```json
-        "protected.gpt-4o": {
-          "name": "GPT-4o",
-          "options": {
-            "max_tokens": 16300
-          }
-        },
-        ```
+*   **Solution:** The new config uses the correct `limit.output` field for all models. If you still see this error, verify you're using the latest config template above.
 
 #### **Issue 2: Error with certain Claude models**
 
@@ -217,7 +382,13 @@ With everything configured, you can now test the full setup from within your pro
     *   `protected.Claude 3.5 Haiku`
     *   `protected.Claude 3.5 Sonnet`
     *   `protected.Claude 3.7 Sonnet`
-*   **Solution:** To avoid this error, do not use these models with the `run` command. They are included in the configuration file for completeness but may not be compatible at this time.
+*   **Solution:** To avoid this error, do not use these models with the `run` command. They are included in the configuration file for completeness but may not be compatible at this time. Use `protected.Claude Haiku 4.5` or `protected.Claude Sonnet 4.5` instead.
+
+#### **Issue 3: Cost tracking shows $0.00**
+
+*   **Symptom:** The TUI sidebar shows "$0.00 spent" even after using models.
+*   **Cause:** This is expected behavior for the BCDC Qwen3.5 model (it's free!). For TAMUS models, costs should be calculated.
+*   **Solution:** Try switching to a TAMUS model like `TAMUS/protected.gpt-5.4` and the cost should start tracking.
 
 ---
 
@@ -227,7 +398,10 @@ Now that you have the CLI configured, you can explore the full capabilities of t
 
 *   **Official Website**: https://opencode.ai/
 *   **Official Documentation**: https://opencode.ai/docs
-*   **Official GitHub Repository**: https://github.com/sst/opencode
+*   **Official GitHub Repository**: https://github.com/anomalyco/opencode
+*   **TAMUS AI Docs**: https://docs.tamus.ai/
+*   **TAMUS Model Pricing**: https://docs.tamus.ai/docs/prod/models
+*   **TAMUS Daily Usage Allowance**: https://docs.tamus.ai/docs/prod/daily-usage-allowance
 
 #### **Editor Integrations**
 
@@ -235,5 +409,23 @@ Now that you have the CLI configured, you can explore the full capabilities of t
 
 *   **Neovim:** For users of Neovim, there are community-driven plugins and configurations available that integrate Opencode.ai into your Vim workflow. Check the documentation and GitHub for the latest community projects.
 
+#### **Advanced Features**
 
+*   **Custom Skills**: Create reusable agent instructions in `~/.config/opencode/skills/`
+*   **Custom Commands**: Define one-shot commands in `~/.config/opencode/commands/`
+*   **Custom Agents**: Build specialized agents for specific tasks in `~/.config/opencode/agents/`
+*   **MCP Servers**: Extend opencode with external tools via Model Context Protocol
+*   **LSP Integration**: Enable `OPENCODE_EXPERIMENTAL_LSP_TOOL=true` for go-to-definition, find-references
 
+---
+
+### **Quick Reference: Model Cost Tiers**
+
+| Tier | Cost (Input/Output per 1M) | Models |
+|------|---------------------------|--------|
+| **$** | <$1 / <$5 | Gemini 2.0 Flash Lite, Claude Haiku 3.5/4.5 |
+| **$$** | $1-3 / $5-15 | GPT-5, GPT-4.1, o3/o4-mini, Gemini 2.5 Pro |
+| **$$$** | $3+ / $15+ | Claude Sonnet 4/4.5, Claude Opus 4.5 |
+| **FREE** | $0 / $0 | BCDC Qwen3.5 (local HPC) |
+
+**Daily Token Allowance:** Each TAMUS user gets a daily token allowance that resets between 6-7 PM CT. See [Daily Usage Allowance](https://docs.tamus.ai/docs/prod/daily-usage-allowance) for details.
