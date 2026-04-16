@@ -2,7 +2,7 @@
 
 ### **Attribution**
 The original version of this document was created by Dr. Lucas W Krakow  
-Completely restructured and updated by Garrison Neel (April 2026)
+Completely restructured and updated by an AI agent (April 2026)
 
 ---
 
